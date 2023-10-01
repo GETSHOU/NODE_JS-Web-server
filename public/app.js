@@ -9,8 +9,11 @@ document.addEventListener("click", ({ target }) => {
 
   if (target.dataset.type === "edit") {
     const id = target.dataset.id;
+    const title = prompt("Введите новое название");
 
-    editNote(id, target);
+    editNote(id, title).then(() => {
+      target.closest("li").querySelector(".note-title").innerText = title;
+    });
   }
 });
 
@@ -20,22 +23,14 @@ async function removeNote(id) {
   });
 }
 
-async function editNote(id, target) {
-  const title = prompt("Введите новое название");
-
+async function editNote(id, title) {
   if (title) {
-    const response = await fetch(`/${id}`, {
+    await fetch(`/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify({ title, id }),
     });
-
-    if (response.ok) {
-      target.closest("li").querySelector(".note-title").innerText = title;
-    }
-
-    return response;
   }
 }
